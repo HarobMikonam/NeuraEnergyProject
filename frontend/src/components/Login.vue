@@ -1,12 +1,17 @@
 <script setup>
 import { ref } from 'vue'
+import { useAuth } from '../composables/useAuth'
+
+const { isLoggedIn, login } = useAuth()
 
 const email = ref('')
 const password = ref('')
+const notification = ref('')
+
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-base-200">
+  <div v-if="!isLoggedIn" class="min-h-screen flex items-center justify-center bg-base-200">
     <div class="card w-full max-w-md bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title justify-center mb-4">Login</h2>
