@@ -15,3 +15,5 @@ Defined an Auth composable to make the logged in state globally accessible and d
 Version 1.4.0
 Due to time constraints, i have reverted the front end that i had already established. The concept of the login page with all its redirects manually set will eat too much time. I have since implemented a template for the login page and  dashboard page.
 
+Version 1.5.0
+Project cleanup, fixed some redirection rules.

@@ -1,71 +1,40 @@
-import { createApp } from 'vue'
-import { createRouter, createWebHistory } from 'vue-router'
-import App from './App.vue'
-import ui from '@nuxt/ui/vue-plugin'
-
 import './assets/css/main.css'
 
-const app = createApp(App)
+import { createApp } from 'vue'
+import { createRouter, createWebHistory } from 'vue-router'
+import ui from '@nuxt/ui/vue-plugin'
+
+import App from './App.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    // public route
-    { path: '/login', component: () => import('./pages/login.vue') },
-    { path: '/dashboard', redirect: '/' },
+    // public login page
+    {
+      path: '/login',
+      component: () => import('./pages/login.vue'),
+    },
 
-    // protected routes
+    // dashboard home (protected)
     {
       path: '/',
       component: () => import('./pages/index.vue'),
       meta: { requiresAuth: true },
     },
+
+    // catch-all: send unknown routes to home (or login)
     {
-      path: '/inbox',
-      component: () => import('./pages/inbox.vue'),
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/customers',
-      component: () => import('./pages/customers.vue'),
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/settings',
-      component: () => import('./pages/settings.vue'),
-      meta: { requiresAuth: true },
-      children: [
-        {
-          path: '',
-          component: () => import('./pages/settings/index.vue'),
-          meta: { requiresAuth: true },
-        },
-        {
-          path: 'members',
-          component: () => import('./pages/settings/members.vue'),
-          meta: { requiresAuth: true },
-        },
-        {
-          path: 'notifications',
-          component: () => import('./pages/settings/notifications.vue'),
-          meta: { requiresAuth: true },
-        },
-        {
-          path: 'security',
-          component: () => import('./pages/settings/security.vue'),
-          meta: { requiresAuth: true },
-        },
-      ],
+      path: '/:pathMatch(.*)*',
+      redirect: '/',
     },
   ],
 })
 
-// simple front-end auth check
+// simple auth check using localStorage
 function isLoggedIn() {
   return !!localStorage.getItem('user')
 }
 
-// global guard: protect routes + handle login redirect
 router.beforeEach((to, from, next) => {
   const loggedIn = isLoggedIn()
 
@@ -80,6 +49,7 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
+const app = createApp(App)
 app.use(router)
 app.use(ui)
 app.mount('#app')
