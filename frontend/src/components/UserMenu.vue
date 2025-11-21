@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import type { DropdownMenuItem } from '@nuxt/ui'
 import { useColorMode } from '@vueuse/core'
+import { useAppConfig } from '../composables/useAppConfig'
 
 defineProps<{
   collapsed?: boolean
