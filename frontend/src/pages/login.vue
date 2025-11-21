@@ -8,16 +8,14 @@ const email = ref('')
 const password = ref('')
 const error = ref('')
 
-// super basic front-end only auth
 const handleLogin = () => {
   if (email.value === 'test@test.com' && password.value === '1234') {
-    // “log in” = store something in localStorage
     localStorage.setItem(
       'user',
       JSON.stringify({ email: email.value }),
     )
     error.value = ''
-    router.push('/') // go to dashboard
+    router.push('/')
   } else {
     error.value = 'Invalid email or password'
   }
@@ -25,7 +23,7 @@ const handleLogin = () => {
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-[#18181B] dark">
+  <div class="min-h-screen flex items-center justify-center bg-black bg-linear-to-br from-black via-[#103625] to-[#42B883]/40 dark">
     <div class="w-full max-w-md rounded-xl bg-white/5 p-6 shadow ring-1 ring-white/10">
       <div class="text-center mb-6">
         <h1 class="text-2xl font-semibold text-white">Log in to your account</h1>
@@ -34,12 +32,11 @@ const handleLogin = () => {
         </p>
       </div>
 
-      <form class="flex flex-col items-center space-y-4" @submit.prevent="handleLogin">
-        <div class="space-y-1">
+      <form class="w-full flex flex-col items-center space-y-4" @submit.prevent="handleLogin">
+        <div class="flex flex-col w-full space-y-1">
           <label class="block text-sm font-medium text-gray-200" for="email">
             Email address
           </label>
-          <!-- UInput is from Nuxt UI (already configured in your template) -->
           <UInput
             id="email"
             v-model="email"
@@ -51,7 +48,7 @@ const handleLogin = () => {
           />
         </div>
 
-        <div class="space-y-1">
+        <div class="flex flex-col w-full space-y-1">
           <label class="block text-sm font-medium text-gray-200" for="password">
             Password
           </label>
