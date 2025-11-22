@@ -1,47 +1,71 @@
-<script setup lang="ts">
+<script setup>
 import { computed, useTemplateRef, ref, watch } from 'vue'
 import { eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval, format } from 'date-fns'
 import { VisXYContainer, VisLine, VisAxis, VisArea, VisCrosshair, VisTooltip } from '@unovis/vue'
 import { useElementSize } from '@vueuse/core'
-import type { Period, Range } from '../../types'
 
-const cardRef = useTemplateRef<HTMLElement | null>('cardRef')
+const cardRef = useTemplateRef('cardRef')
 
-const props = defineProps<{
-  period: Period
-  range: Range
-}>()
-
-type DataRecord = {
-  date: Date
-  amount: number
-}
+const props = defineProps({
+  period: String,
+  range: Object
+})
 
 const { width } = useElementSize(cardRef)
 
-const data = ref<DataRecord[]>([])
+const metrics = [
+  { label: 'Cost', value: 'cost' },
+  { label: 'Energy Used', value: 'energy' },
+  { label: 'Total Active Time', value: 'time' },
+  { label: 'Data Points', value: 'points' }
+]
 
-watch([() => props.period, () => props.range], () => {
+const selectedMetric = ref(metrics[0])
+const data = ref([])
+
+watch([() => props.period, () => props.range, selectedMetric], () => {
   const dates = ({
     daily: eachDayOfInterval,
     weekly: eachWeekOfInterval,
     monthly: eachMonthOfInterval
-  } as Record<Period, typeof eachDayOfInterval>)[props.period](props.range)
+  })[props.period](props.range)
 
-  const min = 1000
-  const max = 10000
+  let min, max
+  if (selectedMetric.value.value === 'cost') {
+    min = 100
+    max = 1000
+  } else if (selectedMetric.value.value === 'energy') {
+    min = 10
+    max = 100
+  } else if (selectedMetric.value.value === 'points') {
+    min = 1
+    max = 100
+  } else {
+    min = 1
+    max = 24
+  }
 
   data.value = dates.map(date => ({ date, amount: Math.floor(Math.random() * (max - min + 1)) + min }))
 }, { immediate: true })
 
-const x = (_: DataRecord, i: number) => i
-const y = (d: DataRecord) => d.amount
+const x = (_, i) => i
+const y = (d) => d.amount
 
-const total = computed(() => data.value.reduce((acc: number, { amount }) => acc + amount, 0))
+const total = computed(() => data.value.reduce((acc, { amount }) => acc + amount, 0))
 
-const formatNumber = new Intl.NumberFormat('en', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format
+const formatValue = (value) => {
+  if (selectedMetric.value.value === 'cost') {
+    return new Intl.NumberFormat('en', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)
+  } else if (selectedMetric.value.value === 'energy') {
+    return `${value.toLocaleString()} kWh`
+  } else if (selectedMetric.value.value === 'points') {
+    return `${value.toLocaleString()} points`
+  } else {
+    return `${value.toLocaleString()} h`
+  }
+}
 
-const formatDate = (date: Date): string => {
+const formatDate = (date) => {
   return ({
     daily: format(date, 'd MMM'),
     weekly: format(date, 'd MMM'),
@@ -49,7 +73,7 @@ const formatDate = (date: Date): string => {
   })[props.period]
 }
 
-const xTicks = (i: number) => {
+const xTicks = (i) => {
   if (i === 0 || i === data.value.length - 1 || !data.value[i]) {
     return ''
   }
@@ -57,19 +81,27 @@ const xTicks = (i: number) => {
   return formatDate(data.value[i].date)
 }
 
-const template = (d: DataRecord) => `${formatDate(d.date)}: ${formatNumber(d.amount)}`
+const template = (d) => `${formatDate(d.date)}: ${formatValue(d.amount)}`
 </script>
 
 <template>
   <UCard ref="cardRef" :ui="{ root: 'overflow-visible', body: '!px-0 !pt-0 !pb-3' }">
     <template #header>
-      <div>
-        <p class="text-xs text-muted uppercase mb-1.5">
-          Revenue
-        </p>
-        <p class="text-3xl text-highlighted font-semibold">
-          {{ formatNumber(total) }}
-        </p>
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-xs text-muted uppercase mb-1.5">
+            {{ selectedMetric.label }}
+          </p>
+          <p class="text-3xl text-highlighted font-semibold">
+            {{ formatValue(total) }}
+          </p>
+        </div>
+        
+        <USelectMenu
+          v-model="selectedMetric"
+          :items="metrics"
+          class="w-40"
+        />
       </div>
     </template>
 

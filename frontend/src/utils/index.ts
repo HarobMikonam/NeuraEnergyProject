@@ -1,7 +1,7 @@
-export function randomInt(min: number, max: number): number {
+export function randomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-export function randomFrom<T>(array: T[]): T {
+export function randomFrom(array) {
   return array[Math.floor(Math.random() * array.length)]
 }

@@ -1,12 +1,12 @@
-<script setup lang="ts">
+<script setup>
 import { ref, computed } from 'vue'
-import type { DropdownMenuItem } from '@nuxt/ui'
+import { useRouter } from 'vue-router'
 import { useColorMode } from '@vueuse/core'
 import { useAppConfig } from '../composables/useAppConfig'
 
-defineProps<{
-  collapsed?: boolean
-}>()
+defineProps({
+  collapsed: Boolean
+})
 
 const colorMode = useColorMode()
 const appConfig = useAppConfig()
@@ -22,7 +22,9 @@ const user = ref({
   }
 })
 
-const items = computed<DropdownMenuItem[][]>(() => ([[{
+const router = useRouter()
+
+const items = computed(() => ([[{
   type: 'label',
   label: user.value.name,
   avatar: user.value.avatar
@@ -78,7 +80,7 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
     icon: 'i-lucide-sun',
     type: 'checkbox',
     checked: colorMode.value === 'light',
-    onSelect(e: Event) {
+    onSelect(e) {
       e.preventDefault()
 
       colorMode.value = 'light'
@@ -88,18 +90,22 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
     icon: 'i-lucide-moon',
     type: 'checkbox',
     checked: colorMode.value === 'dark',
-    onUpdateChecked(checked: boolean) {
+    onUpdateChecked(checked) {
       if (checked) {
         colorMode.value = 'dark'
       }
     },
-    onSelect(e: Event) {
+    onSelect(e) {
       e.preventDefault()
     }
   }]
 }],[{
   label: 'Log out',
-  icon: 'i-lucide-log-out'
+  icon: 'i-lucide-log-out',
+  onSelect: () => {
+    localStorage.removeItem('user')
+    router.push('/login')
+  }
 }]]))
 </script>
 
@@ -130,8 +136,8 @@ const items = computed<DropdownMenuItem[][]>(() => ([[{
         <span
           class="rounded-full ring ring-bg bg-(--chip-light) dark:bg-(--chip-dark) size-2"
           :style="{
-            '--chip-light': `var(--color-${(item as any).chip}-500)`,
-            '--chip-dark': `var(--color-${(item as any).chip}-400)`
+            '--chip-light': `var(--color-${item.chip}-500)`,
+            '--chip-dark': `var(--color-${item.chip}-400)`
           }"
         />
       </div>

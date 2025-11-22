@@ -1,17 +1,15 @@
-<script setup lang="ts">
+<script setup>
 import { ref, shallowRef } from 'vue'
 import { sub } from 'date-fns'
-import type { DropdownMenuItem } from '@nuxt/ui'
 import { useDashboard } from '../composables/useDashboard'
-import type { Period, Range } from '../types'
 
 const { isNotificationsSlideoverOpen } = useDashboard()
 
-const range = shallowRef<Range>({
+const range = shallowRef({
   start: sub(new Date(), { days: 14 }),
   end: new Date()
 })
-const period = ref<Period>('daily')
+const period = ref('daily')
 </script>
 
 <template>

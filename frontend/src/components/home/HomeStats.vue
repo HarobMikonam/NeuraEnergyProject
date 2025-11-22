@@ -1,14 +1,13 @@
-<script setup lang="ts">
+<script setup>
 import { ref, watch } from 'vue'
 import { randomInt } from '../../utils'
-import type { Period, Range, Stat } from '../../types'
 
-const props = defineProps<{
-  period: Period
-  range: Range
-}>()
+const props = defineProps({
+  period: String,
+  range: Object
+})
 
-function formatCurrency(value: number): string {
+function formatCurrency(value) {
   return value.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -17,37 +16,37 @@ function formatCurrency(value: number): string {
 }
 
 const baseStats = [{
-  title: 'Customers',
-  icon: 'i-lucide-users',
+  title: 'Data Logged',
+  icon: 'i-lucide-database',
   minValue: 400,
   maxValue: 1000,
   minVariation: -15,
   maxVariation: 25
 }, {
-  title: 'Conversions',
-  icon: 'i-lucide-chart-pie',
+  title: 'Total Time',
+  icon: 'i-lucide-clock',
   minValue: 1000,
   maxValue: 2000,
   minVariation: -10,
   maxVariation: 20
 }, {
-  title: 'Revenue',
-  icon: 'i-lucide-circle-dollar-sign',
+  title: 'Energy Used',
+  icon: 'i-lucide-zap',
   minValue: 200000,
   maxValue: 500000,
   minVariation: -20,
   maxVariation: 30,
   formatter: formatCurrency
 }, {
-  title: 'Orders',
-  icon: 'i-lucide-shopping-cart',
+  title: 'Cost',
+  icon: 'i-lucide-dollar-sign',
   minValue: 100,
   maxValue: 300,
   minVariation: -5,
   maxVariation: 15
 }]
 
-const stats = ref<Stat[]>([])
+const stats = ref([])
 
 watch([() => props.period, () => props.range], () => {
   stats.value = baseStats.map((stat) => {

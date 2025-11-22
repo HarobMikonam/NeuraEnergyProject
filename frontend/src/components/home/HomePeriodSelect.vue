@@ -1,17 +1,16 @@
-<script setup lang="ts">
+<script setup>
 import { computed, watch } from 'vue'
 import { eachDayOfInterval } from 'date-fns'
-import type { Period, Range } from '../../types'
 
-const model = defineModel<Period>({ required: true })
+const model = defineModel({ required: true })
 
-const props = defineProps<{
-  range: Range
-}>()
+const props = defineProps({
+  range: Object
+})
 
 const days = computed(() => eachDayOfInterval(props.range))
 
-const periods = computed<Period[]>(() => {
+const periods = computed(() => {
   if (days.value.length <= 8) {
     return [
       'daily'

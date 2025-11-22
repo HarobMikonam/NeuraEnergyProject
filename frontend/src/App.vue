@@ -1,8 +1,7 @@
-<script setup lang="ts">
+<script setup>
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStorage } from '@vueuse/core'
-import type { NavigationMenuItem } from '@nuxt/ui'
 
 const route = useRoute()
 
@@ -128,10 +127,6 @@ const links = [[{
           class="bg-elevated/25"
           :ui="{ footer: 'lg:border-t lg:border-default' }"
         >
-          <template #header="{ collapsed }">
-            <TeamsMenu :collapsed="collapsed" />
-          </template>
-
           <template #default="{ collapsed }">
 
             <UNavigationMenu
@@ -158,9 +153,8 @@ const links = [[{
 
         <RouterView />
 
-        <NotificationsSlideover />
       </UDashboardGroup>
-
+      
       <RouterView v-else />
     </UApp>
   </Suspense>
