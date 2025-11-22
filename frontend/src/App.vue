@@ -1,7 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useStorage } from '@vueuse/core'
 
 const route = useRoute()
 

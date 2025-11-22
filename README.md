@@ -32,3 +32,6 @@ Added a /login api endpoint to the backend, responses are token based so the use
 
 Version 1.10.0
 Routes were updated, and overall project cleanup was done to simplify things. Fixed issues with models.py after re-generating from the database (PowerShell encoding issue)
+
+Veresion 1.11.0
+Configurtional change, removed a package that came bundled with the template and had issues.

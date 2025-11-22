@@ -2,7 +2,6 @@
 import { computed, useTemplateRef, ref, watch } from 'vue'
 import { eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval, format } from 'date-fns'
 import { VisXYContainer, VisLine, VisAxis, VisArea, VisCrosshair, VisTooltip } from '@unovis/vue'
-import { useElementSize } from '@vueuse/core'
 import { mockData } from '../../utils/mockData'
 
 const cardRef = useTemplateRef('cardRef')
@@ -12,7 +11,6 @@ const props = defineProps({
   range: Object
 })
 
-const { width } = useElementSize(cardRef)
 
 const metrics = [
   { label: 'Cost', value: 'cost' },
