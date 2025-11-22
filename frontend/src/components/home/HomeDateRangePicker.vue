@@ -80,11 +80,10 @@ const selectRange = (range) => {
 const isModalOpen = ref(false)
 const activeTab = ref('insert') // 'insert' or 'delete'
 
-// Mock Data
 const mockData = ref([
-  { id: 1, date: '2023-10-26', startTime: '00:00', endTime: '01:00', usage: 1.2, cost: 0.15, notes: '' },
-  { id: 2, date: '2023-10-26', startTime: '01:00', endTime: '02:00', usage: 0.8, cost: 0.10, notes: '' },
-  { id: 3, date: '2023-10-26', startTime: '02:00', endTime: '03:00', usage: 0.5, cost: 0.06, notes: '' },
+  { id: 1, date: '2023-10-26', startTime: '00:00', endTime: '01:00', usage: 1.2, cost: 0.15 },
+  { id: 2, date: '2023-10-26', startTime: '01:00', endTime: '02:00', usage: 0.8, cost: 0.10 },
+  { id: 3, date: '2023-10-26', startTime: '02:00', endTime: '03:00', usage: 0.5, cost: 0.06 },
 ])
 
 // Insert Form
@@ -94,7 +93,6 @@ const formData = ref({
   endTime: '',
   usage: 0,
   cost: 0,
-  notes: ''
 })
 
 const insertData = () => {
@@ -109,7 +107,6 @@ const insertData = () => {
     endTime: '',
     usage: 0,
     cost: 0,
-    notes: ''
   }
   alert('Data inserted successfully (Mock)')
 }
@@ -213,9 +210,6 @@ const items = [{
                   <UInput type="number" step="0.01" v-model="formData.cost" required class="w-full" />
                 </UFormField>
               </div>
-              <UFormField label="Notes">
-                <UTextarea v-model="formData.notes" class="w-full" />
-              </UFormField>
               <UButton type="submit" label="Insert Record" block />
             </form>
           </template>
