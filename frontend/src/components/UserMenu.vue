@@ -1,17 +1,10 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAppConfig } from '../composables/useAppConfig'
 
 defineProps({
   collapsed: Boolean
 })
-
-const colorMode = useColorMode()
-const appConfig = useAppConfig()
-
-const colors = ['red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose']
-const neutrals = ['slate', 'gray', 'zinc', 'neutral', 'stone']
 
 const user = ref({
   name: 'Neura Energy',
@@ -23,90 +16,27 @@ const user = ref({
 
 const router = useRouter()
 
-const items = computed(() => ([[{
-  type: 'label',
-  label: user.value.name,
-  avatar: user.value.avatar
-}], [{
-  label: 'Theme',
-  icon: 'i-lucide-palette',
-  children: [{
-    label: 'Primary',
-    slot: 'chip',
-    chip: appConfig.ui.colors.primary,
-    content: {
-      align: 'center',
-      collisionPadding: 16
-    },
-    children: colors.map(color => ({
-      label: color,
-      chip: color,
-      slot: 'chip',
-      checked: appConfig.ui.colors.primary === color,
-      type: 'checkbox',
-      onSelect: (e) => {
-        e.preventDefault()
-
-        appConfig.ui.colors.primary = color
-      }
-    }))
-  }, {
-    label: 'Neutral',
-    slot: 'chip',
-    chip: appConfig.ui.colors.neutral === 'neutral' ? 'old-neutral' : appConfig.ui.colors.neutral,
-    content: {
-      align: 'end',
-      collisionPadding: 16
-    },
-    children: neutrals.map(color => ({
-      label: color,
-      chip: color === 'neutral' ? 'old-neutral' : color,
-      slot: 'chip',
-      type: 'checkbox',
-      checked: appConfig.ui.colors.neutral === color,
-      onSelect: (e) => {
-        e.preventDefault()
-
-        appConfig.ui.colors.neutral = color
-      }
-    }))
-  }]
-}, {
-  label: 'Appearance',
-  icon: 'i-lucide-sun-moon',
-  children: [{
-    label: 'Light',
-    icon: 'i-lucide-sun',
-    type: 'checkbox',
-    checked: colorMode.value === 'light',
-    onSelect(e) {
-      e.preventDefault()
-
-      colorMode.value = 'light'
+// Only show the user label and a "Log out" item
+const items = computed(() => ([
+  [
+    {
+      type: 'label',
+      label: user.value.name,
+      avatar: user.value.avatar
     }
-  }, {
-    label: 'Dark',
-    icon: 'i-lucide-moon',
-    type: 'checkbox',
-    checked: colorMode.value === 'dark',
-    onUpdateChecked(checked) {
-      if (checked) {
-        colorMode.value = 'dark'
+  ],
+  [
+    {
+      label: 'Log out',
+      icon: 'i-lucide-log-out',
+      onSelect: () => {
+        localStorage.removeItem('user')
+        localStorage.removeItem('token')
+        router.push('/login')
       }
-    },
-    onSelect(e) {
-      e.preventDefault()
     }
-  }]
-}],[{
-  label: 'Log out',
-  icon: 'i-lucide-log-out',
-  onSelect: () => {
-    localStorage.removeItem('user')
-    localStorage.removeItem('token')
-    router.push('/login')
-  }
-}]]))
+  ]
+]))
 </script>
 
 <template>
@@ -126,21 +56,7 @@ const items = computed(() => ([[{
       block
       :square="collapsed"
       class="data-[state=open]:bg-elevated"
-      :ui="{
-        trailingIcon: 'text-dimmed'
-      }"
+      :ui="{ trailingIcon: 'text-dimmed' }"
     />
-
-    <template #chip-leading="{ item }">
-      <div class="inline-flex items-center justify-center shrink-0 size-5">
-        <span
-          class="rounded-full ring ring-bg bg-(--chip-light) dark:bg-(--chip-dark) size-2"
-          :style="{
-            '--chip-light': `var(--color-${item.chip}-500)`,
-            '--chip-dark': `var(--color-${item.chip}-400)`
-          }"
-        />
-      </div>
-    </template>
   </UDropdownMenu>
 </template>
