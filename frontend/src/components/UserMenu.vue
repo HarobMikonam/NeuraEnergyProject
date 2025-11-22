@@ -104,6 +104,7 @@ const items = computed(() => ([[{
   icon: 'i-lucide-log-out',
   onSelect: () => {
     localStorage.removeItem('user')
+    localStorage.removeItem('token')
     router.push('/login')
   }
 }]]))

@@ -32,7 +32,7 @@ const router = createRouter({
 
 // simple auth check using localStorage
 function isLoggedIn() {
-  return !!localStorage.getItem('user')
+  return !!localStorage.getItem('token')
 }
 
 router.beforeEach((to, from, next) => {

@@ -7,17 +7,32 @@ const router = useRouter()
 const email = ref('')
 const password = ref('')
 const error = ref('')
+const loading = ref(false)
 
-const handleLogin = () => {
-  if (email.value === 'test@test.com' && password.value === '1234') {
-    localStorage.setItem(
-      'user',
-      JSON.stringify({ email: email.value }),
-    )
-    error.value = ''
+const API_LOGIN = 'http://127.0.0.1:8000/login/'
+
+const handleLogin = async () => {
+  error.value = ''
+  loading.value = true
+  try {
+    console.log(email.value, password.value)
+    const res = await fetch(API_LOGIN, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: email.value, password: password.value }),
+      credentials: 'include',
+    })
+
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Login failed')
+
+    localStorage.setItem('user', JSON.stringify({ email: email.value }))
+    localStorage.setItem('token', data.token)
     router.push('/')
-  } else {
-    error.value = 'Invalid email or password'
+  } catch (e) {
+    error.value = e.message || 'Login failed'
+  } finally {
+    loading.value = false
   }
 }
 </script>

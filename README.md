@@ -26,3 +26,6 @@ Added a postgres datbase, made migrations for admin, auth, contenttypes and sess
 
 Version 1.8.0
 Fixed the frontend Dashboard HomeStats to show correct value, reflecting the mockData file i have created. 
+
+Version 1.9.0
+Added a /login api endpoint to the backend, responses are token based so the users cant login by setting their email in localStorage. Started working on a data_view endpoint to retrieve data from the database.
