@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { DateFormatter, getLocalTimeZone, CalendarDate, today } from '@internationalized/date'
+import { mockData } from '../../utils/mockData'
 
 const df = new DateFormatter('en-US', {
   dateStyle: 'medium'
@@ -80,12 +81,6 @@ const selectRange = (range) => {
 const isModalOpen = ref(false)
 const activeTab = ref('insert') // 'insert' or 'delete'
 
-const mockData = ref([
-  { id: 1, date: '2023-10-26', startTime: '00:00', endTime: '01:00', usage: 1.2, cost: 0.15 },
-  { id: 2, date: '2023-10-26', startTime: '01:00', endTime: '02:00', usage: 0.8, cost: 0.10 },
-  { id: 3, date: '2023-10-26', startTime: '02:00', endTime: '03:00', usage: 0.5, cost: 0.06 },
-])
-
 // Insert Form
 const formData = ref({
   date: '',
@@ -108,7 +103,7 @@ const insertData = () => {
     usage: 0,
     cost: 0,
   }
-  alert('Data inserted successfully (Mock)')
+  alert('Data inserted successfully')
 }
 
 const deleteData = (id) => {
@@ -122,6 +117,7 @@ const items = [{
   label: 'Delete Data',
   slot: 'delete',
 }]
+
 </script>
 
 <template>

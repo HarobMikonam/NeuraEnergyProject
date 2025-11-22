@@ -22,4 +22,7 @@ Version 1.6.0
 Minor changes to javascript. Added a modal to the daterangeselector component to be able to do crud operations on the data. Added a modal in the dashboard to be able to select a specific data point, such as electricity used, cost, total time etc.
 
 Version 1.7.0
-Added a postgres datbaase, made migrations for admin, auth, contenttypes and sessions. Exploring django file structure.
+Added a postgres datbase, made migrations for admin, auth, contenttypes and sessions. Exploring django file structure.
+
+Version 1.8.0
+Fixed the frontend Dashboard HomeStats to show correct value, reflecting the mockData file i have created. 

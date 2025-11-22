@@ -1,66 +1,50 @@
 <script setup>
-import { ref, watch } from 'vue'
-import { randomInt } from '../../utils'
+import { ref, watch, computed } from 'vue'
+import { mockData, totalCost, totalUsage, countInArray, totalTime } from '../../utils/mockData'
 
 const props = defineProps({
   period: String,
   range: Object
 })
 
-function formatCurrency(value) {
-  return value.toLocaleString('en-US', {
+const dataLogged = computed(() => mockData.value.length)
+const totalUsageKwh = computed(() => totalUsage(mockData.value))
+const totalCostUsd = computed(() => totalCost(mockData.value))
+const totalTimeHours = computed(() => totalTime(mockData.value))
+
+
+const formatKWh   = (n) => Number.isFinite(Number(n)) ? `${Number(n).toFixed(2)} kWh` : '—'
+const formatHours = (n) => Number.isFinite(Number(n)) ? `${Number(n).toFixed(2)} h`   : '—'
+
+function formatCurrency(n) {
+  const x = Number(n)
+  return x.toLocaleString('en-US', {
     style: 'currency',
     currency: 'USD',
-    maximumFractionDigits: 0
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   })
 }
 
-const baseStats = [{
-  title: 'Data Logged',
-  icon: 'i-lucide-database',
-  minValue: 400,
-  maxValue: 1000,
-  minVariation: -15,
-  maxVariation: 25
-}, {
-  title: 'Total Time',
-  icon: 'i-lucide-clock',
-  minValue: 1000,
-  maxValue: 2000,
-  minVariation: -10,
-  maxVariation: 20
-}, {
-  title: 'Energy Used',
-  icon: 'i-lucide-zap',
-  minValue: 200000,
-  maxValue: 500000,
-  minVariation: -20,
-  maxVariation: 30,
-  formatter: formatCurrency
-}, {
-  title: 'Cost',
-  icon: 'i-lucide-dollar-sign',
-  minValue: 100,
-  maxValue: 300,
-  minVariation: -5,
-  maxVariation: 15
-}]
-
-const stats = ref([])
-
-watch([() => props.period, () => props.range], () => {
-  stats.value = baseStats.map((stat) => {
-    const value = randomInt(stat.minValue, stat.maxValue)
-    const variation = randomInt(stat.minVariation, stat.maxVariation)
-
-    return {
-      title: stat.title,
-      icon: stat.icon,
-      value: stat.formatter ? stat.formatter(value) : value,
-      variation
-    }
-  })
-}, { immediate: true })
+const stats = computed(() => {
+  return [{
+    title: 'Data Logged',
+    icon: 'i-lucide-database',
+    value: dataLogged.value,
+  }, {
+    title: 'Total Time',
+    icon: 'i-lucide-clock',
+    value: formatHours(totalTimeHours.value)
+  }, {
+    title: 'Energy Used',
+    icon: 'i-lucide-zap',
+    value: formatKWh(totalUsageKwh.value)
+  }, {
+    title: 'Cost',
+    icon: 'i-lucide-dollar-sign',
+    value: formatCurrency(totalCostUsd.value)
+  }]
+})
 </script>
 
 <template>
@@ -84,14 +68,6 @@ watch([() => props.period, () => props.range], () => {
         <span class="text-2xl font-semibold text-highlighted">
           {{ stat.value }}
         </span>
-
-        <UBadge
-          :color="stat.variation > 0 ? 'success' : 'error'"
-          variant="subtle"
-          class="text-xs"
-        >
-          {{ stat.variation > 0 ? '+' : '' }}{{ stat.variation }}%
-        </UBadge>
       </div>
     </UPageCard>
   </UPageGrid>

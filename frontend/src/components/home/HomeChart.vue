@@ -23,6 +23,8 @@ const metrics = [
 const selectedMetric = ref(metrics[0])
 const data = ref([])
 
+import { mockData } from '../../utils/mockData'
+
 watch([() => props.period, () => props.range, selectedMetric], () => {
   const dates = ({
     daily: eachDayOfInterval,
@@ -30,22 +32,35 @@ watch([() => props.period, () => props.range, selectedMetric], () => {
     monthly: eachMonthOfInterval
   })[props.period](props.range)
 
-  let min, max
-  if (selectedMetric.value.value === 'cost') {
-    min = 100
-    max = 1000
-  } else if (selectedMetric.value.value === 'energy') {
-    min = 10
-    max = 100
-  } else if (selectedMetric.value.value === 'points') {
-    min = 1
-    max = 100
-  } else {
-    min = 1
-    max = 24
-  }
+  data.value = dates.map(date => {
+    const dateStr = format(date, 'yyyy-MM-dd')
+    
 
-  data.value = dates.map(date => ({ date, amount: Math.floor(Math.random() * (max - min + 1)) + min }))
+    const dayData = mockData.value.filter(item => item.date === dateStr)
+    
+    let amount = 0
+    
+    if (selectedMetric.value.value === 'cost') {
+      amount = dayData.reduce((sum, item) => sum + Number(item.cost || 0), 0)
+    } else if (selectedMetric.value.value === 'energy') {
+      amount = dayData.reduce((sum, item) => sum + Number(item.usage || 0), 0)
+    } else if (selectedMetric.value.value === 'points') {
+      amount = dayData.length
+    } else if (selectedMetric.value.value === 'time') {
+
+      amount = dayData.reduce((total, item) => {
+        if (!item.startTime || !item.endTime) return total
+        const [sh, sm] = item.startTime.split(':').map(Number)
+        const [eh, em] = item.endTime.split(':').map(Number)
+        const startMinutes = sh * 60 + sm
+        const endMinutes = eh * 60 + em
+        const diff = (endMinutes - startMinutes) / 60
+        return total + Math.max(diff, 0)
+      }, 0)
+    }
+    
+    return { date, amount }
+  })
 }, { immediate: true })
 
 const x = (_, i) => i
@@ -55,7 +70,7 @@ const total = computed(() => data.value.reduce((acc, { amount }) => acc + amount
 
 const formatValue = (value) => {
   if (selectedMetric.value.value === 'cost') {
-    return new Intl.NumberFormat('en', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)
+    return new Intl.NumberFormat('en', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value)
   } else if (selectedMetric.value.value === 'energy') {
     return `${value.toLocaleString()} kWh`
   } else if (selectedMetric.value.value === 'points') {
