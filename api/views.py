@@ -38,17 +38,17 @@ def login_view(request):
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-def data_view(request):
-    if request.method == 'OPTIONS':
-        return HttpResponse(status=200)
+# def data_view(request):
+#     if request.method == 'OPTIONS':
+#         return HttpResponse(status=200)
 
-    if request.method == 'GET':
-        try:
-            token = request.GET.get('token')
-            user_id = cache.get(token)
-            if user_id is None:
-                return JsonResponse({'error': 'Invalid token'}, status=400)
-            return JsonResponse({'message': 'Data retrieved successfully', 'user_id': user_id})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
-    return JsonResponse({'error': 'Method not allowed'}, status=405)
+#     if request.method == 'GET':
+#         try:
+#             token = request.GET.get('token')
+#             user_id = cache.get(token)
+#             if user_id is None:
+#                 return JsonResponse({'error': 'Invalid token'}, status=400)
+#             return JsonResponse({'message': 'Data retrieved successfully', 'user_id': user_id})
+#         except Exception as e:
+#             return JsonResponse({'error': str(e)}, status=500)
+#     return JsonResponse({'error': 'Method not allowed'}, status=405)

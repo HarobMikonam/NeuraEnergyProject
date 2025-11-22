@@ -1,9 +1,6 @@
 <script setup>
 import { ref, shallowRef } from 'vue'
 import { sub } from 'date-fns'
-import { useDashboard } from '../composables/useDashboard'
-
-const { isNotificationsSlideoverOpen } = useDashboard()
 
 const range = shallowRef({
   start: sub(new Date(), { days: 14 }),
@@ -15,11 +12,6 @@ const period = ref('daily')
 <template>
   <UDashboardPanel id="home">
     <template #header>
-      <UDashboardNavbar title="Home" :ui="{ right: 'gap-3' }">
-        <template #leading>
-          <UDashboardSidebarCollapse />
-        </template>
-      </UDashboardNavbar>
 
       <UDashboardToolbar>
         <template #left>
@@ -34,7 +26,6 @@ const period = ref('daily')
     <template #body>
       <HomeStats :period="period" :range="range" />
       <HomeChart :period="period" :range="range" />
-      <HomeSales :period="period" :range="range" />
     </template>
   </UDashboardPanel>
 </template>

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import {baseUrl, routes} from '../utils/routes'
 
 const router = useRouter()
 
@@ -9,14 +10,12 @@ const password = ref('')
 const error = ref('')
 const loading = ref(false)
 
-const API_LOGIN = 'http://127.0.0.1:8000/login/'
-
 const handleLogin = async () => {
   error.value = ''
   loading.value = true
   try {
     console.log(email.value, password.value)
-    const res = await fetch(API_LOGIN, {
+    const res = await fetch(baseUrl(routes.api.login), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: email.value, password: password.value }),

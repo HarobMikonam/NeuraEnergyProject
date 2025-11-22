@@ -3,6 +3,7 @@ import { computed, useTemplateRef, ref, watch } from 'vue'
 import { eachDayOfInterval, eachWeekOfInterval, eachMonthOfInterval, format } from 'date-fns'
 import { VisXYContainer, VisLine, VisAxis, VisArea, VisCrosshair, VisTooltip } from '@unovis/vue'
 import { useElementSize } from '@vueuse/core'
+import { mockData } from '../../utils/mockData'
 
 const cardRef = useTemplateRef('cardRef')
 
@@ -22,8 +23,6 @@ const metrics = [
 
 const selectedMetric = ref(metrics[0])
 const data = ref([])
-
-import { mockData } from '../../utils/mockData'
 
 watch([() => props.period, () => props.range, selectedMetric], () => {
   const dates = ({
