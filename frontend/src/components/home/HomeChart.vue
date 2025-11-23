@@ -26,6 +26,7 @@ watch([() => props.period, () => props.range, selectedMetric], () => {
   if (!props.range.start) return
 
   const start = props.range.start
+  // if no end, use start
   const end = props.range.end || props.range.start
 
   const dates = start.getTime() === end.getTime()

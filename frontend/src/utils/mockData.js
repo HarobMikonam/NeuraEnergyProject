@@ -5,8 +5,10 @@ export const measurements = ref([]);
 export const mockData = measurements;
 
 
-// helpers to avoid timezone shifts
+// convert number to string.
 const pad = n => String(n).padStart(2, '0');
+
+// convert date to ymd. YYYY-MM-DD
 const ymd = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 
 export async function fetchMeasurements(startDate, endDate) {
@@ -14,6 +16,7 @@ export async function fetchMeasurements(startDate, endDate) {
     let url = `${baseUrl(routes.api.measurements)}?`;
     const params = new URLSearchParams();
 
+    // check if startDate and endDate are valid date objects and not invalid
     const hasStart = startDate instanceof Date && !isNaN(startDate);
     const hasEnd   = endDate   instanceof Date && !isNaN(endDate);
 

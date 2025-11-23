@@ -22,9 +22,6 @@ class D202(models.Model):
         db_table = 'D202'
         ordering = ['date', 'start_time']
 
-    def __str__(self):
-        return f'{self.date} {self.start_time} (id={self.id})'
-
 
 class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)

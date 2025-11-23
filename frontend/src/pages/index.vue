@@ -9,6 +9,7 @@ const range = shallowRef({
 })
 const period = ref('daily')
 
+//Auto-fetch when range changes
 watch(range, (newRange) => {
   if (newRange.start) {
     fetchMeasurements(newRange.start, newRange.end)
