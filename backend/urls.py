@@ -16,12 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from api.views import login_view
-# from api.views import data_view
+from api.views import login_view, MeasurementList, MeasurementDetail
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', login_view, name='login'),
-    # path('data/all/', views.data_all, name='data_all'), 
-    # path('data/<int:pk>/', views.data_one, name='data_one'),
+    path('api/measurements/', MeasurementList.as_view(), name='measurement-list'),
+    path('api/measurements/<int:pk>/', MeasurementDetail.as_view(), name='measurement-detail'),
 ]

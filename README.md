@@ -35,3 +35,6 @@ Routes were updated, and overall project cleanup was done to simplify things. Fi
 
 Veresion 1.11.0
 Configurtional change, removed a package that came bundled with the template and had issues.
+
+Version 1.12.0
+Implement API for energy measurements and a frontend dashboard with date range selection and corrected data visualization.

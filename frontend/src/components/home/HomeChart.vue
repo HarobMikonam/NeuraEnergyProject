@@ -23,11 +23,18 @@ const selectedMetric = ref(metrics[0])
 const data = ref([])
 
 watch([() => props.period, () => props.range, selectedMetric], () => {
-  const dates = ({
-    daily: eachDayOfInterval,
-    weekly: eachWeekOfInterval,
-    monthly: eachMonthOfInterval
-  })[props.period](props.range)
+  if (!props.range.start) return
+
+  const start = props.range.start
+  const end = props.range.end || props.range.start
+
+  const dates = start.getTime() === end.getTime()
+    ? [start]
+    : ({
+        daily: eachDayOfInterval,
+        weekly: eachWeekOfInterval,
+        monthly: eachMonthOfInterval
+      })[props.period]({ start, end })
 
   data.value = dates.map(date => {
     const dateStr = format(date, 'yyyy-MM-dd')
@@ -47,8 +54,8 @@ watch([() => props.period, () => props.range, selectedMetric], () => {
 
       amount = dayData.reduce((total, item) => {
         if (!item.startTime || !item.endTime) return total
-        const [sh, sm] = item.startTime.split(':').map(Number)
-        const [eh, em] = item.endTime.split(':').map(Number)
+        const [sh=0, sm=0] = String(item.startTime).split(':').map(Number)
+const [eh=0, em=0] = String(item.endTime).split(':').map(Number)
         const startMinutes = sh * 60 + sm
         const endMinutes = eh * 60 + em
         const diff = (endMinutes - startMinutes) / 60
@@ -86,6 +93,7 @@ const formatDate = (date) => {
 }
 
 const xTicks = (i) => {
+  if (data.value.length === 1) return formatDate(data.value[0].date)
   if (i === 0 || i === data.value.length - 1 || !data.value[i]) {
     return ''
   }
@@ -94,6 +102,31 @@ const xTicks = (i) => {
 }
 
 const template = (d) => `${formatDate(d.date)}: ${formatValue(d.amount)}`
+
+// Fix for missing width property
+import { onMounted, onUnmounted } from 'vue'
+
+const width = ref(0)
+let resizeObserver
+
+onMounted(() => {
+  if (cardRef.value) {
+    // UCard renders a div, but if it's a component we might need $el
+    const el = cardRef.value.$el || cardRef.value
+    resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        width.value = entry.contentRect.width
+      }
+    })
+    resizeObserver.observe(el)
+  }
+})
+
+onUnmounted(() => {
+  if (resizeObserver) {
+    resizeObserver.disconnect()
+  }
+})
 </script>
 
 <template>

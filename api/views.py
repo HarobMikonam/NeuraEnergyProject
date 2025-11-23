@@ -1,9 +1,15 @@
 import json
 from django.contrib.auth import authenticate, login
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import secrets
 from django.core.cache import cache
+from rest_framework import generics
+from .models import D202
+from .serializers import MeasurementSerializer
+from django.db.models.functions import Trim, Coalesce
+from django.db.models import Value, CharField, F, DateField
+from django.db.models.expressions import Func
 
 
 # crsf exempt cause we dont have security token implementation, as far as i know, DRF handles this automatically.
@@ -38,17 +44,36 @@ def login_view(request):
 
     return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-# def data_view(request):
-#     if request.method == 'OPTIONS':
-#         return HttpResponse(status=200)
 
-#     if request.method == 'GET':
-#         try:
-#             token = request.GET.get('token')
-#             user_id = cache.get(token)
-#             if user_id is None:
-#                 return JsonResponse({'error': 'Invalid token'}, status=400)
-#             return JsonResponse({'message': 'Data retrieved successfully', 'user_id': user_id})
-#         except Exception as e:
-#             return JsonResponse({'error': str(e)}, status=500)
-#     return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+# a manual approach would be to query the data with .all() and then pass it to the serializer. Afterwards return the data as a response.
+# @api_view(['GET'])
+# def get_measurements(request):
+
+#     queryset = D202.objects.all()
+#     serializer = MeasurementSerializer(queryset, many=True)
+#     return Response(serializer.data, status=200)
+
+# i wouldve used the manual functions with @api_view, but this seems like it automates most of the things for me.
+# I suppose one would be better than the other due to more control over the process, but these do the job fine.
+
+class MeasurementList(generics.ListCreateAPIView):
+    serializer_class = MeasurementSerializer
+
+    def get_queryset(self):
+        qs = D202.objects.all()
+        start = self.request.query_params.get('start_date')
+        end   = self.request.query_params.get('end_date')
+
+        if start and end:
+            qs = qs.filter(date__range=[start, end])
+        elif start:
+            qs = qs.filter(date__gte=start)
+        elif end:
+            qs = qs.filter(date__lte=end)
+
+        return qs.order_by('date', 'start_time')
+
+class MeasurementDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = D202.objects.all()
+    serializer_class = MeasurementSerializer

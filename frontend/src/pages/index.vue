@@ -1,12 +1,19 @@
 <script setup>
-import { ref, shallowRef } from 'vue'
+import { ref, shallowRef, watch, onMounted } from 'vue'
 import { sub } from 'date-fns'
+import { fetchMeasurements } from '../utils/mockData'
 
 const range = shallowRef({
   start: sub(new Date(), { days: 14 }),
   end: new Date()
 })
 const period = ref('daily')
+
+watch(range, (newRange) => {
+  if (newRange.start) {
+    fetchMeasurements(newRange.start, newRange.end)
+  }
+}, { immediate: true })
 </script>
 
 <template>

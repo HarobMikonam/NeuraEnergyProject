@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { DateFormatter, getLocalTimeZone, CalendarDate, today } from '@internationalized/date'
-import { mockData } from '../../utils/mockData'
+import { mockData, createMeasurement, deleteMeasurement } from '../../utils/mockData'
 
 const df = new DateFormatter('en-US', {
   dateStyle: 'medium'
@@ -33,9 +33,9 @@ const calendarRange = computed({
   }),
   set: (newValue) => {
     selected.value = {
-      start: newValue.start ? newValue.start.toDate(getLocalTimeZone()) : new Date(),
-      end: newValue.end ? newValue.end.toDate(getLocalTimeZone()) : new Date()
-    }
+     start: newValue.start ? newValue.start.toDate(getLocalTimeZone()) : undefined,
+     end: newValue.end ? newValue.end.toDate(getLocalTimeZone()) : undefined
+   }
   }
 })
 
@@ -79,6 +79,8 @@ const selectRange = (range) => {
 
 // Modal Logic
 const isModalOpen = ref(false)
+const isDeleteConfirmOpen = ref(false)
+const itemToDelete = ref(null)
 const activeTab = ref('insert') // 'insert' or 'delete'
 
 // Insert Form
@@ -90,24 +92,38 @@ const formData = ref({
   cost: 0,
 })
 
-const insertData = () => {
-  mockData.value.push({
-    id: Date.now(),
-    ...formData.value
-  })
-
-  formData.value = {
-    date: '',
-    startTime: '',
-    endTime: '',
-    usage: 0,
-    cost: 0,
+const insertData = async () => {
+  const success = await createMeasurement(formData.value)
+  
+  if (success) {
+    formData.value = {
+      date: '',
+      startTime: '',
+      endTime: '',
+      usage: 0,
+      cost: 0,
+    }
+    isModalOpen.value = false
+  } else {
+    alert('Failed to insert data')
   }
-  alert('Data inserted successfully')
 }
 
 const deleteData = (id) => {
-  mockData.value = mockData.value.filter(item => item.id !== id)
+  itemToDelete.value = id
+  isDeleteConfirmOpen.value = true
+}
+
+const confirmDelete = async () => {
+  if (itemToDelete.value) {
+    const success = await deleteMeasurement(itemToDelete.value)
+    if (success) {
+      itemToDelete.value = null
+      isDeleteConfirmOpen.value = false
+    } else {
+      alert('Failed to delete data')
+    }
+  }
 }
 
 const items = [{
@@ -233,5 +249,16 @@ const items = [{
         </UTabs>
       </template>
     </UModal>
+
+    <UModal v-model:open="isDeleteConfirmOpen" title="Confirm Deletion" description="Are you sure you want to delete this record? This action cannot be undone.">
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <UButton label="Cancel" color="neutral" variant="outline" @click="isDeleteConfirmOpen = false" />
+          <!-- Colours on nuxtui docs "error" | "primary" | "secondary" | "success" | "info" | "warning" | "neutral" -->
+          <UButton label="Delete" color="error" @click="confirmDelete" />
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
+

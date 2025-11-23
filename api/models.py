@@ -10,16 +10,20 @@ from django.db import models
 
 class D202(models.Model):
     id = models.AutoField(db_column='id', primary_key=True)
-    date = models.TextField(db_column='DATE', blank=True, null=True)
-    start_time = models.TextField(db_column='START TIME', blank=True, null=True)
-    end_time = models.TextField(db_column='END TIME', blank=True, null=True)
-    usage = models.FloatField(db_column='USAGE', blank=True, null=True)
-    units = models.TextField(db_column='UNITS', blank=True, null=True)
-    cost = models.TextField(db_column='COST', blank=True, null=True)
+    date = models.DateField(db_column='DATE', null=True, blank=True)
+    start_time = models.TimeField(db_column='START TIME', null=True, blank=True)
+    end_time = models.TimeField(db_column='END TIME', null=True, blank=True)
+    usage = models.FloatField(db_column='USAGE', null=True, blank=True)
+    units = models.TextField(db_column='UNITS', null=True, blank=True)
+    cost = models.DecimalField(db_column='COST', max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:
         managed = False
         db_table = 'D202'
+        ordering = ['date', 'start_time']
+
+    def __str__(self):
+        return f'{self.date} {self.start_time} (id={self.id})'
 
 
 class AuthGroup(models.Model):
