@@ -66,13 +66,13 @@ class MeasurementList(generics.ListCreateAPIView):
         end   = self.request.query_params.get('end_date')
 
         if start and end:
-            qs = qs.filter(date__range=[start, end])
+            qs = qs.filter(date__range=[start, end]) #query range for both start and end (WHERE date BETWEEN start AND end)
         elif start:
-            qs = qs.filter(date__gte=start)
+            qs = qs.filter(date__gte=start) #query for start date (WHERE date >= start)
         elif end:
-            qs = qs.filter(date__lte=end)
+            qs = qs.filter(date__lte=end) #query for end date (WHERE date <= end)
 
-        return qs.order_by('date', 'start_time')
+        return qs.order_by('date', 'start_time') #order by date and start time
 
 class MeasurementDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = D202.objects.all()

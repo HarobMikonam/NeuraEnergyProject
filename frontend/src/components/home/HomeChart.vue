@@ -52,7 +52,6 @@ watch([() => props.period, () => props.range, selectedMetric], () => {
     } else if (selectedMetric.value.value === 'points') {
       amount = dayData.length
     } else if (selectedMetric.value.value === 'time') {
-
       amount = dayData.reduce((total, item) => {
         if (!item.startTime || !item.endTime) return total
         const [sh=0, sm=0] = String(item.startTime).split(':').map(Number)
