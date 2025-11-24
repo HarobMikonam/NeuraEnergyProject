@@ -27,7 +27,7 @@ export async function fetchMeasurements(startDate, endDate) {
       params.set('end_date', ymd(endDate));
     }
 
-    if ([...params].length) url += `?${params.toString()}`;
+    if ([...params].length) url += `?${params.toString()}`; 
 
     const res = await fetch(url, { headers: { Accept: 'application/json' } });
     if (!res.ok) throw new Error('Failed to fetch measurements');
